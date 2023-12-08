@@ -29,6 +29,10 @@ def scrape_page_for_stats(url):
     """
     Scrape page at given url and return stats about chosen tags
     """
+    # articles hosted on hn have a relative url
+    if url[:4] == "item":
+        url = "https://news.ycombinator.com/" + url
+
     page = requests.get(url, timeout=15)
     html_doc = page.content
     soup = BeautifulSoup(html_doc, 'html.parser')

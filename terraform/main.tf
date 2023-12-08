@@ -62,6 +62,11 @@ resource "random_password" "dev_mnq_pg_exporter_password" {
   override_special = "_-"
 }
 
+output db_password {
+  value = random_password.dev_mnq_pg_exporter_password.result
+  sensitive = true
+}
+
 resource "scaleway_rdb_instance" "main" {
   name = "test-rdb"
   project_id   = scaleway_account_project.mnq_tutorial.id
@@ -69,7 +74,7 @@ resource "scaleway_rdb_instance" "main" {
   engine = "PostgreSQL-15"
   is_ha_cluster = false
   disable_backup = true 
-  user_name = "postgres"
+  user_name = "mnq_initial_user"
   password = random_password.dev_mnq_pg_exporter_password.result
 }
 
@@ -131,6 +136,7 @@ resource "scaleway_function" "consumer" {
   zip_file     = "../worker/functions.zip"
   zip_hash     = filesha256("../worker/functions.zip")
   deploy       = true
+  max_scale    = 3
   environment_variables = {
     DB_NAME = scaleway_rdb_database.hn-database.name
     DB_HOST = scaleway_rdb_instance.main.load_balancer[0].ip
