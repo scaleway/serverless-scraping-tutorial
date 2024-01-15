@@ -45,7 +45,6 @@ resource "scaleway_mnq_sqs_queue" "main" {
   # possible to pass scaleway_mnq_sqs resource directly? To see with devtools
   project_id = scaleway_account_project.mnq_tutorial.id
   name       = "hn-queue"
-  endpoint   = scaleway_mnq_sqs.main.endpoint
   access_key = scaleway_mnq_sqs_credentials.producer_creds.access_key
   secret_key = scaleway_mnq_sqs_credentials.producer_creds.secret_key
 }
@@ -133,8 +132,8 @@ resource "scaleway_function" "consumer" {
   handler      = "handlers/consumer.handle"
   privacy      = "private"
   timeout      = 10
-  zip_file     = "../worker/functions.zip"
-  zip_hash     = filesha256("../worker/functions.zip")
+  zip_file     = "../consumer/functions.zip"
+  zip_hash     = filesha256("../consumer/functions.zip")
   deploy       = true
   max_scale    = 3
   environment_variables = {
